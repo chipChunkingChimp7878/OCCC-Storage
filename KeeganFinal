@@ -442,7 +442,11 @@ public class KeeganFinal extends JFrame implements ActionListener, DocumentListe
 			}
 		if ( e.getSource() == HMhint ){
 			System.out.println("HINT WAS SELECTED");
-			JOptionPane.showMessageDialog(null, "This applaction is to register people ethier OCCCPersons(meaning they have a first, \nlastname, date, govermentID, and studentID), registerPersons(meaning they have a first, \nlastname, date, and govermentID) or Persons(meaning they have a first, lastname, and date). \nFirst you can open a file from the file menu or use the new option to start a brand new file,\nthe list of persons already registered in the file you have opened will be displaced at the bottom.\nSecond enter the needed information then click the aproprete button. Optionally third input the \nline of the person you wish to remove next to the remove button then click remove to remove \nthem from the Filelist.", "How this works", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "This applaction is to register people ethier OCCCPersons(meaning they have a first, \nlastname, date, govermentID, and studentID),"
+			+ " registerPersons(meaning they have a first, \nlastname, date, and govermentID) or Persons(meaning they have a first, lastname, and date). \nFirst you can open a file"
+			+ " from the file menu or use the new option to start a brand new file,\nthe list of persons already registered in the file you have opened will be displaced at the bottom."
+			+ "\nSecond enter the needed information then click the aproprete button. Optionally third input the \nline of the person you wish to remove next to the remove button then "
+			+ "click remove to remove \nthem from the Filelist.", "How this works", JOptionPane.INFORMATION_MESSAGE);
 			}
 		
 		
