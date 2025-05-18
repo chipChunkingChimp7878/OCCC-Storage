@@ -469,7 +469,7 @@ public class KeeganFinal extends JFrame implements ActionListener, DocumentListe
 					throw new InvalidOCCCDateException();
 				}
 			}catch(InvalidOCCCDateException e1) {
-				System.out.println(e1.getMessage()+" You my try again.");
+				JOptionPane.showMessageDialog(null, "Date is invalid. Please try again.", "Date Error", JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			
