@@ -1,1 +1,569 @@
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.util.GregorianCalendar;
+import java.util.Scanner;
 
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+
+public class KeeganFinal extends JFrame implements ActionListener, DocumentListener {
+	private static final int WIDTH = 800;
+	private static final int HEIGHT = 800;
+	
+	JMenuBar bar;
+	JMenuItem FMopen, FMsave, FMsaveAs, FMexit, FMnew ,HMhint;
+	JLabel firstLabel, lastLabel, govLabel, stuLabel, listLabel, fileLabel, fileName, dayLabel, monthLabel, yearLabel ;
+	JButton submitButton, removeButton;
+	JTextField firstText = new JTextField(6);
+	JTextField lastText = new JTextField(6);
+	JTextField govText = new JTextField(6);
+	JTextField regText = new JTextField(6);
+	JTextField dayText = new JTextField(4);
+	JTextField monthText = new JTextField(4);
+	JTextField yearText = new JTextField(5);
+	JTextField removeText = new JTextField(4);
+	JTextArea listText = new JTextArea(20,50);
+	Document docF = firstText.getDocument();
+	Document docL = lastText.getDocument();
+	Document docG = govText.getDocument();
+	Document docR = regText.getDocument();
+	Document docD = regText.getDocument();
+	Document docM = regText.getDocument();
+	Document docY = regText.getDocument();
+	int line;
+	JPanel northPanel1;
+	JPanel northPanel2;
+	File file = null;
+	String check1 = "k";
+	int check2 = 2;
+	
+	person[] array = new person[0];
+	
+	
+	public static void main(String [] args) {
+		KeeganFinal KF = new KeeganFinal();
+	}
+	
+	
+	public KeeganFinal() {
+		super("Persons Database");
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setSize(WIDTH, HEIGHT);
+		setLayout(new BorderLayout());
+		
+		//MenuBar
+		bar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic(KeyEvent.VK_F);
+		
+		FMnew = new JMenuItem("New");
+		FMnew.addActionListener(this);
+		FMnew.setMnemonic(KeyEvent.VK_N);
+		
+		FMopen = new JMenuItem("Open");
+		FMopen.addActionListener(this);
+		FMopen.setMnemonic(KeyEvent.VK_O);
+		
+		
+		FMsave = new JMenuItem("Save");
+		FMsave.addActionListener(this);
+		FMsave.setMnemonic(KeyEvent.VK_V);
+		
+		FMsaveAs = new JMenuItem("Save As");
+		FMsaveAs.addActionListener(this);
+		FMsaveAs.setMnemonic(KeyEvent.VK_V);
+		 
+		FMexit = new JMenuItem("Exit");
+		FMexit.addActionListener(this);
+		FMexit.setMnemonic(KeyEvent.VK_X);
+		
+		fileMenu.add(FMnew);
+		fileMenu.add(FMopen);
+		fileMenu.add(FMsave);
+		fileMenu.add(FMsaveAs);
+		fileMenu.addSeparator();
+		fileMenu.add(FMexit);
+		
+		bar.add(fileMenu);
+		setJMenuBar(bar);
+		
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic(KeyEvent.VK_H);
+		
+		HMhint = new JMenuItem("Hint");
+		HMhint.addActionListener(this);
+		
+		helpMenu.add(HMhint);
+		bar.add(Box.createHorizontalGlue());
+		bar.add(helpMenu);
+		
+		//Panels
+		northPanel1 = new JPanel();
+		northPanel2 = new JPanel();
+		JPanel southPanel = new JPanel();
+		
+		Font plainFont = new Font("Ariel", Font.PLAIN, 18);
+		
+		firstLabel = new JLabel("Firstname:");
+		lastLabel = new JLabel("Lastname:");
+		govLabel = new JLabel("GovermentID:");
+		stuLabel = new JLabel("StudentID:");
+		dayLabel = new JLabel("Day:");
+		monthLabel = new JLabel("Month:");
+		yearLabel = new JLabel("Year:");
+		
+		firstLabel.setFont(plainFont);
+		lastLabel.setFont(plainFont);
+		govLabel.setFont(plainFont);
+		stuLabel.setFont(plainFont);
+		dayLabel.setFont(plainFont);
+		monthLabel.setFont(plainFont);
+		yearLabel.setFont(plainFont);
+		firstText.setFont(plainFont);
+		lastText.setFont(plainFont);
+		govText.setFont(plainFont);
+		regText.setFont(plainFont);
+		dayText.setFont(plainFont);
+		monthText.setFont(plainFont);
+		yearText.setFont(plainFont);
+		
+		northPanel1.setLayout(new FlowLayout(FlowLayout.CENTER));
+		northPanel1.add(firstLabel);
+		northPanel1.add(firstText);
+		northPanel1.add(lastLabel);
+		northPanel1.add(lastText);
+		northPanel1.add(govLabel);
+		northPanel1.add(govText);
+		northPanel1.add(stuLabel);
+		northPanel1.add(regText);
+		
+		northPanel2.setLayout(new FlowLayout(FlowLayout.CENTER));
+		northPanel2.add(dayLabel);
+		northPanel2.add(dayText);
+		northPanel2.add(monthLabel);
+		northPanel2.add(monthText);
+		northPanel2.add(yearLabel);
+		northPanel2.add(yearText);
+		
+		
+		fileLabel = new JLabel("File: ");
+		fileName = new JLabel("");
+		submitButton = new JButton("Submit");
+		removeButton = new JButton("Remove line ->");
+		
+		fileLabel.setFont(plainFont);
+		fileName.setFont(plainFont);
+		submitButton.setFont(plainFont);
+		removeButton.setFont(plainFont);
+		removeText.setFont(plainFont);
+		listText.setEnabled(false);
+		listText.setFont(plainFont);
+		
+		
+		
+		southPanel.setLayout(new BorderLayout());
+		JPanel upperSPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel lowerSPanel = new JPanel(new GridLayout(1,1));
+		upperSPanel.add(fileLabel);
+		upperSPanel.add(fileName);
+		upperSPanel.add(submitButton);
+		upperSPanel.add(removeButton);
+		upperSPanel.add(removeText);
+		lowerSPanel.add(listText);
+		southPanel.add(upperSPanel, BorderLayout.NORTH);
+		southPanel.add(lowerSPanel, BorderLayout.SOUTH);
+		
+		add(northPanel1, BorderLayout.NORTH);
+		add(northPanel2, BorderLayout.CENTER);
+		add(southPanel, BorderLayout.SOUTH);
+		
+		removeText.addActionListener(this);
+		firstText.addActionListener(this);
+		lastText.addActionListener(this);
+		govText.addActionListener(this);
+		regText.addActionListener(this);
+		submitButton.addActionListener(this);
+		removeButton.addActionListener(this);
+		fileMenu.addActionListener(this);
+		docF.addDocumentListener(this);
+		docL.addDocumentListener(this);
+		docG.addDocumentListener(this);
+		docR.addDocumentListener(this);
+		docD.addDocumentListener(this);
+		docM.addDocumentListener(this);
+		docY.addDocumentListener(this);
+		setVisible(true);
+		
+		addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+
+		        if (listText.getText().equals(check1) || check1 == "k") {
+		        	System.exit(0);
+		        }
+		        else {
+		        	int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
+		            if (option == JOptionPane.YES_OPTION) {
+		            	System.exit(0);
+		            }
+		        }
+		        	
+		    }
+		        
+		});
+		
+		
+	}
+	@Override
+	public void actionPerformed(ActionEvent e){
+		String first = firstText.getText();
+		String last = lastText.getText();
+		String gov = govText.getText();
+		String reg = regText.getText();
+		int day = 0;
+		int month = 0;
+		int year = 0;
+		if (dayText.getText().equals("")) {
+			
+		}
+		else {
+			day = Integer.parseInt(dayText.getText());
+		}
+		if (monthText.getText().equals("")) {
+			
+		}
+		else {
+			month = Integer.parseInt(monthText.getText());
+		}
+		if (yearText.getText().equals("")) {
+			
+		}
+		else {
+			year = Integer.parseInt(yearText.getText());
+		}
+		String filename = fileName.getText();
+		Scanner l = new Scanner(listText.getText());
+		int k = listText.getLineCount()-1;
+		int count = 0;
+		
+		
+		OCCCDate date = new OCCCDate(day, month-1, year);
+		person p = new person(first, last, date);
+		RegisteredPerson rp = new RegisteredPerson(p, gov);
+		OCCCPerson op = new OCCCPerson(rp, reg);
+		if ( e.getSource() == FMopen ){
+			System.out.println("OPEN WAS SELECTED");
+			if (firstText.getText().equals("") && lastText.getText().equals("") && govText.getText().equals("") && regText.getText().equals("")) {
+				
+			}
+			else {
+				int option = JOptionPane.showConfirmDialog(null, "any data in the textfields is not saved are you sure \nyou want to open a different file?", "Confirm File Change", JOptionPane.YES_NO_OPTION);
+	            if (option == JOptionPane.YES_OPTION) {
+	            	listText.setText("");
+	            	fileName.setText("");
+	            }
+	            else {
+	            	return;
+	            }
+			}
+			
+			array = new person[0];
+			
+			JFileChooser showFiles = new JFileChooser();
+			int x = showFiles.showOpenDialog(null);
+			if (x == JFileChooser.APPROVE_OPTION)
+				file = new File(showFiles.getSelectedFile().getAbsolutePath());
+			
+			    
+			person o;
+			try (ObjectInputStream oin1 = new ObjectInputStream(new FileInputStream(file))) {
+					while (true) {
+						try {
+					        oin1.readObject();
+					        count++;
+					        System.out.println(count);
+						}
+						catch (java.io.EOFException e1) {
+					        break;
+					    }
+						catch (ClassNotFoundException e1) {
+					        System.err.println("Class not found: " + e1.getMessage());
+					        break;
+					    }
+						
+					}
+					} 
+			catch (IOException e1) {
+			            System.err.println("Error reading file: " + e1.getMessage());
+			        }
+					try {
+						FileInputStream   fin = new FileInputStream(file);
+						ObjectInputStream oin2 = new ObjectInputStream(fin);
+						array = new person[count];
+						for(int i = 0; i < array.length; ++i){
+							o = (person) oin2.readObject();
+							System.out.println(o.getClass());
+							System.out.println(count+" "+i);
+							if (o.getClass().equals(OCCCPerson.class)){
+								array[i] = (OCCCPerson) o;
+								listText.append(array[i].toString()+"\n");
+								}
+							else if (o.getClass().equals(RegisteredPerson.class)){
+								array[i] = (RegisteredPerson) o;
+								listText.append(array[i].toString()+"\n");
+								}
+							else{
+								array[i] = (person) o;
+								listText.append(array[i].toString()+"\n");
+								}
+							}
+						check1 = listText.getText();
+						oin2.close();
+						fileName.setText(file.toString());
+						}
+					catch(Exception e1){
+						System.out.println("INPUT ERROR");
+						System.out.println(e1.toString());
+						}
+					
+					}
+		if ( e.getSource() == FMsave ){
+			System.out.println("SAVE WAS SELECTED");
+		    try{
+		      FileOutputStream   fout = new FileOutputStream(filename);
+		      ObjectOutputStream oout = new ObjectOutputStream(fout);
+
+		      for(int i = 0; i < array.length; ++i){
+			     oout.writeObject(array[i]);
+			  }
+		      oout.close();
+		      
+		      check1 = listText.getText();
+		    }
+		    catch(IOException e1){
+		      System.out.println(e1.toString());
+		    }
+		    
+		}
+		if ( e.getSource() == FMsaveAs ){
+			System.out.println("SAVE AS WAS SELECTED");
+			
+			JFileChooser showFiles1 = new JFileChooser();
+			File file1 = null;
+			int x1 = showFiles1.showOpenDialog(null);
+			if (x1 == JFileChooser.APPROVE_OPTION)
+				file1 = new File(showFiles1.getSelectedFile().getAbsolutePath());
+		    fileName.setText(file1.toString());
+		    
+		    try{
+		      FileOutputStream   fout = new FileOutputStream(file1);
+		      ObjectOutputStream oout = new ObjectOutputStream(fout);
+
+		      for(int i = 0; i < array.length; ++i){
+		        oout.writeObject(array[i]);
+		      }
+		      oout.close();
+		      
+		      check1 = listText.getText();
+		    }
+		    catch(IOException e1){
+		      System.out.println(e1.toString());
+		    }
+		    
+			}
+		if ( e.getSource() == FMexit ){
+			System.out.println("EXITING");
+
+			if (listText.getText().equals(check1) || check1 == "k") {
+	        	System.exit(0);
+	        }
+	        else {
+	        	int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
+	            if (option == JOptionPane.YES_OPTION) {
+	            	System.exit(0);
+	            }
+	        }
+		}
+		if ( e.getSource() == FMnew ){
+			System.out.println("OPENING NEW");
+			if (firstText.getText().equals("") && lastText.getText().equals("") && govText.getText().equals("") && regText.getText().equals("")) {
+				
+			}
+			else {
+				int option = JOptionPane.showConfirmDialog(null, "any data in the textfields is not saved are you sure \nyou want to open a different file?", "Confirm File Change", JOptionPane.YES_NO_OPTION);
+	            if (option == JOptionPane.YES_OPTION) {
+	            	listText.setText("");
+	            	fileName.setText("");
+	            }
+	            else {
+	            	return;
+	            }
+			}
+				
+			filename = JOptionPane.showInputDialog(null, "Please enter the name of your new file", "FileName",JOptionPane.QUESTION_MESSAGE);
+			try {
+				PrintWriter pw = new PrintWriter(filename);
+				pw.close();
+				
+				fileName.setText(filename.toString());
+				check1 = listText.getText();
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+			
+			}
+		if ( e.getSource() == HMhint ){
+			System.out.println("HINT WAS SELECTED");
+			JOptionPane.showMessageDialog(null, "This applaction is to register people ethier OCCCPersons(meaning they have a first, \nlastname, date, govermentID, and studentID), registerPersons(meaning they have a first, \nlastname, date, and govermentID) or Persons(meaning they have a first, lastname, and date). \nFirst you can open a file from the file menu or use the new option to start a brand new file,\nthe list of persons already registered in the file you have opened will be displaced at the bottom.\nSecond enter the needed information then click the aproprete button. Optionally third input the \nline of the person you wish to remove next to the remove button then click remove to remove \nthem from the Filelist.", "How this works", JOptionPane.INFORMATION_MESSAGE);
+			}
+		
+		
+		if ( e.getSource() == removeButton) {
+			line = Integer.parseInt(removeText.getText())-1;
+			try {
+				listText.replaceRange(null, listText.getLineStartOffset(line), listText.getLineEndOffset(line));
+				array = removePerson(array, line);
+			} catch (BadLocationException e1) {
+				e1.printStackTrace();
+			}
+			l.close();
+			
+		}
+		
+		if ( e.getSource() == submitButton) {
+			
+			try {
+				GregorianCalendar gc = new  GregorianCalendar();
+				gc.set(year, month-1, day);
+				if(date.isValid(gc, date)) {
+				}
+				else {
+					throw new InvalidOCCCDateException();
+				}
+			}catch(InvalidOCCCDateException e1) {
+				System.out.println(e1.getMessage()+" You my try again.");
+				return;
+			}
+			
+			if(first.isEmpty() == false && last.isEmpty() == false && gov.isEmpty() == false && reg.isEmpty() == false) {
+				listText.append(op.toString()+"\n");
+				array = addPerson(k, array, op);
+				
+			}
+			else if (first.isEmpty() == false && last.isEmpty() == false && gov.isEmpty() == false) {
+				listText.append(rp.toString()+"\n");
+				array = addPerson(k, array, rp);
+			}
+			else if (first.isEmpty() == false && last.isEmpty() == false) {
+				listText.append(p.toString()+"\n");
+				array = addPerson(k, array, p);
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Somthing went wrong please make sure you atleast filled out first and lastname", "Error", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		firstText.setText("");
+		lastText.setText("");
+		govText.setText("");
+		regText.setText("");
+		dayText.setText("");
+		monthText.setText("");
+		yearText.setText("");
+		
+	}
+	public static person[] addPerson(int n, person arr[], person x){
+
+	       person newArray[] = new person[n + 1];
+	       
+	       for (int i = 0; i < n; i++)
+	           newArray[i] = arr[i];
+	 
+	       newArray[n] = x;
+	 
+	       return newArray;
+	   }
+	public static person[] removePerson(person array[], int x){
+		
+		person newArray[] = new person[array.length - 1];
+	        int j = 0;
+
+	        for (int i = 0; i < array.length; i++) {
+	            if (i != x) {
+	                newArray[j++] = array[i];
+	            }
+	        }
+	        return newArray;
+	   }
+
+
+	@Override
+	public void insertUpdate(DocumentEvent i) {
+		System.out.println("INSERT");
+		try {
+			if (docF.getText(0, docF.getLength()).equals("") && docL.getText(0, docL.getLength()).equals("") && docG.getText(0, docG.getLength()).equals("") && docR.getText(0, docR.getLength()).equals("") && docD.getText(0, docD.getLength()).equals("") && docM.getText(0, docM.getLength()).equals("") && docY.getText(0, docY.getLength()).equals("")) {
+				FMsave.setEnabled(true); 
+				FMsaveAs.setEnabled(true);
+			}
+			else {
+				FMsave.setEnabled(false); 
+				FMsaveAs.setEnabled(false);
+			}
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	@Override
+	public void removeUpdate(DocumentEvent r) {
+		System.out.println("REMOVE");
+		try {
+			if (docF.getText(0, docF.getLength()).equals("") && docL.getText(0, docL.getLength()).equals("") && docG.getText(0, docG.getLength()).equals("") && docR.getText(0, docR.getLength()).equals("") && docD.getText(0, docD.getLength()).equals("") && docM.getText(0, docM.getLength()).equals("") && docY.getText(0, docY.getLength()).equals("")) {
+				FMsave.setEnabled(true); 
+				FMsaveAs.setEnabled(true);
+			}
+			else {
+				FMsave.setEnabled(false); 
+				FMsaveAs.setEnabled(false);
+			}
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+	@Override
+	public void changedUpdate(DocumentEvent c) {
+		
+	}
+}
